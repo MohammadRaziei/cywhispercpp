@@ -105,14 +105,14 @@ class TestWhisperWithModel:
         """Test whisper with a valid model file."""
         # This test is skipped by default as it requires a model file
         # model_path = "path/to/valid/model.bin"
-        # whisper_instance = whisper.Whisper(model_path)
+        # whisper_instance = wcp.Whisper(model_path)
         # assert whisper_instance is not None
         pass
     
     def test_transcribe_audio(self):
         """Test audio transcription with valid model and audio."""
         # This test is skipped by default as it requires model and audio
-        # whisper_instance = whisper.Whisper("path/to/model.bin")
+        # whisper_instance = wcp.Whisper("path/to/model.bin")
         # audio_data = [0.0] * 16000  # 1 second of silence
         # result = whisper_instance.transcribe(audio_data)
         # assert result is not None

@@ -1,10 +1,8 @@
 [build-system]
 requires = [
-    "setuptools",
     "scikit-build-core[pyproject]",
     "cython",
-    "cmake",
-    "ninja",
+    "cython-cmake",
 ]
 build-backend = "scikit_build_core.build"
 
@@ -13,7 +11,7 @@ name = "whisper-cpp"
 version = "0.1.0"
 description = "Python bindings for whisper.cpp using Cython"
 authors = [
-    {name = "Your Name", email = "your.email@example.com"},
+    {name = "Mohammad Raziei", email = "mohammadraziei1375@gmail.com"},
 ]
 readme = "README.md"
 license = {text = "MIT"}

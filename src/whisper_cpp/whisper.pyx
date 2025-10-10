@@ -12,6 +12,8 @@ from cpython.ref cimport PyObject
 from cpython.mem cimport PyMem_Malloc, PyMem_Free
 
 cdef extern from "whisper.h":
+    ctypedef int whisper_token
+    
     ctypedef struct whisper_context:
         pass
     

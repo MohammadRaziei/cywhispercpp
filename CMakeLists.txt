@@ -17,7 +17,7 @@ include(UseCython)
 set(MODULE_NAME whisper_cpp)
 
 # Configure Cython module
-cython_transpile(src/whisper_cpp/whisper.pyx LANGUAGE C OUTPUT_VARIABLE whisper_c)
+cython_transpile(src/whisper_cpp/whisper.pyx LANGUAGE CXX OUTPUT_VARIABLE whisper_c)
 
 # Create Python module
 python_add_library(${MODULE_NAME} MODULE "${whisper_c}" WITH_SOABI)

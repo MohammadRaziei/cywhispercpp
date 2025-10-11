@@ -52,5 +52,5 @@ target_include_directories(${MODULE_NAME} PRIVATE
 target_link_libraries(${MODULE_NAME} PRIVATE whisper)
 
 # Install the module
-install(TARGETS ${MODULE_NAME} DESTINATION ${SKBUILD_PROJECT_NAME})
-install(TARGETS whisper DESTINATION ${SKBUILD_PROJECT_NAME})
+install(TARGETS ${MODULE_NAME} DESTINATION ${SKBUILD_PROJECT_NAME}/whisper)
+install(TARGETS whisper DESTINATION ${SKBUILD_PROJECT_NAME}/whisper)

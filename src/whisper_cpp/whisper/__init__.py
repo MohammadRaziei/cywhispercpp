@@ -8,8 +8,8 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 
-def get_whisper_path(): 
-    return Path(__file__).parent
+def get_whisper_cpp_path(): 
+    return Path(__file__).parent / "cpp" 
     
 
 # Load all whisper.cpp libraries before importing the Cython module
@@ -17,14 +17,13 @@ def load_whisper_library():
     """Load all whisper.cpp libraries using ctypes so they're available for the Cython module"""
     
     # Get the directory where the parent package is located
-    current_dir = get_whisper_path()
-    lib_dir = current_dir / "cpp" / "lib"
+    lib_dir = get_whisper_cpp_path() / "lib"
     
     # Load all required libraries in dependency order
     libraries = [
         "libggml-base.so",
-        "libggml.so", 
         "libggml-cpu.so",
+        "libggml.so", 
         "libwhisper.so.1",  # Load the versioned library first
     ]
     
@@ -32,7 +31,7 @@ def load_whisper_library():
         lib_path = lib_dir / lib_name
         if lib_path.exists():
             try:
-                ctypes.CDLL(str(lib_path))
+                ctypes.CDLL(str(lib_path), mode=ctypes.RTLD_GLOBAL)
                 logger.debug(f"Successfully loaded: {lib_name}")
             except Exception as e:
                 logger.warning(f"Failed to load {lib_name}: {e}")

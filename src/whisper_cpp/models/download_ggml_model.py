@@ -4,17 +4,9 @@ This script downloads Whisper model files that have already been converted to gg
 This way you don't have to convert them yourself.
 """
 
-import argparse
-import sys
 import urllib.request
 import shutil
 from pathlib import Path
-from typing import List
-
-
-# ANSI color codes
-BOLD = "\033[1m"
-RESET = "\033[0m"
 
 # Source URLs
 DEFAULT_SRC = "https://huggingface.co/ggerganov/whisper.cpp"
@@ -69,19 +61,21 @@ def list_models() -> None:
     print("\n")
 
 
-def download_with_progress(url: str, output_path: Path) -> bool:
+def download_with_progress(url: str, output_path: Path, verbose: bool = True) -> bool:
     """
     Download a file from URL to output_path with progress indication.
     
     Args:
         url: URL to download from
         output_path: Path where to save the file
+        verbose: Show progress information
         
     Returns:
         True if successful, False otherwise
     """
     try:
-        print(f"Downloading from: {url}")
+        if verbose:
+            print(f"Downloading from: {url}")
         
         # Open the URL
         with urllib.request.urlopen(url) as response:
@@ -101,18 +95,21 @@ def download_with_progress(url: str, output_path: Path) -> bool:
                     out_file.write(buffer)
                     
                     # Show progress
-                    if total_size > 0:
-                        percent = (downloaded / total_size) * 100
-                        print(f"\rProgress: {percent:.1f}% ({downloaded}/{total_size} bytes)", end="")
-                    else:
-                        print(f"\rDownloaded: {downloaded} bytes", end="")
+                    if verbose:
+                        if total_size > 0:
+                            percent = (downloaded / total_size) * 100
+                            print(f"\rProgress: {percent:.1f}% ({downloaded}/{total_size} bytes)", end="")
+                        else:
+                            print(f"\rDownloaded: {downloaded} bytes", end="")
                 
-                print()  # New line after progress
+                if verbose:
+                    print()  # New line after progress
         
         return True
         
     except Exception as e:
-        print(f"\nError downloading file: {e}")
+        if verbose:
+            print(f"\nError downloading file: {e}")
         return False
 
 
@@ -127,21 +124,23 @@ def get_default_download_path() -> Path:
         return script_path
 
 
-def download_model(model: str, models_path: Path = None) -> int:
+def download_model(model: str, models_path: Path = None, verbose: bool = True) -> int:
     """
     Download a specific Whisper model.
     
     Args:
         model: Model name to download
         models_path: Path where to save the model (optional)
+        verbose: Show progress and messages
         
     Returns:
         0 if successful, 1 otherwise
     """
     # Validate model
     if model not in MODELS:
-        print(f"Invalid model: {model}")
-        list_models()
+        if verbose:
+            print(f"Invalid model: {model}")
+            list_models()
         return 1
     
     # Set default path if not provided
@@ -167,73 +166,37 @@ def download_model(model: str, models_path: Path = None) -> int:
     
     # Check if model already exists
     if output_file.exists():
-        print(f"Model {model} already exists. Skipping download.")
+        if verbose:
+            print(f"Model {model} already exists. Skipping download.")
         return 0
     
     # Download the model
-    print(f"Downloading ggml model {model} from '{src}' ...")
+    if verbose:
+        print(f"Downloading ggml model {model} from '{src}' ...")
     
     url = f"{src}/{pfx}-{model}.bin"
     
-    if not download_with_progress(url, output_file):
-        print(f"Failed to download ggml model {model}")
-        print("Please try again later or download the original Whisper model files and convert them yourself.")
+    if not download_with_progress(url, output_file, verbose=verbose):
+        if verbose:
+            print(f"Failed to download ggml model {model}")
+            print("Please try again later or download the original Whisper model files and convert them yourself.")
         # Clean up partial download
         if output_file.exists():
             output_file.unlink()
         return 1
     
     # Success message
-    print(f"\nDone! Model '{model}' saved in '{output_file}'")
-    print("You can now use it like this:\n")
-    
-    # Check for whisper-cli command
-    whisper_cmd = shutil.which("whisper-cli")
-    if whisper_cmd is None:
-        whisper_cmd = "./build/bin/whisper-cli"
-    
-    print(f"  $ {whisper_cmd} -m {output_file} -f samples/jfk.wav\n")
+    if verbose:
+        print(f"\nDone! Model '{model}' saved in '{output_file}'")
+        print("You can now use it like this:\n")
+        
+        # Check for whisper-cli command
+        whisper_cmd = shutil.which("whisper-cli")
+        if whisper_cmd is None:
+            whisper_cmd = "./build/bin/whisper-cli"
+        
+        print(f"  $ {whisper_cmd} -m {output_file} -f samples/jfk.wav\n")
     
     return 0
 
 
-def main() -> int:
-    """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Download Whisper model files in ggml format.",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=f"{BOLD}.en{RESET} = english-only  {BOLD}-q5_[01]{RESET} = quantized  {BOLD}-tdrz{RESET} = tinydiarize"
-    )
-    
-    parser.add_argument(
-        "model",
-        help="Model name to download"
-    )
-    
-    parser.add_argument(
-        "models_path",
-        nargs="?",
-        default=None,
-        help="Path where to save the model (default: script directory or current directory if in /bin/)"
-    )
-    
-    parser.add_argument(
-        "--list",
-        action="store_true",
-        help="List all available models"
-    )
-    
-    # Parse arguments
-    args = parser.parse_args()
-    
-    # List models if requested
-    if args.list:
-        list_models()
-        return 0
-    
-    # Download the model
-    return download_model(args.model, args.models_path)
-
-
-if __name__ == "__main__":
-    sys.exit(main())

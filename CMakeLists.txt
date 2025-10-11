@@ -30,6 +30,31 @@ find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(Cython MODULE REQUIRED VERSION 3.0)
 include(UseCython)
 
+
+
+# Use ExternalProject to additionally install whisper.cpp to build/installed_whisper_cpp
+include(ExternalProject)
+
+# Build and install whisper.cpp as external project to separate location
+# ExternalProject_Add(whisper_cpp_install
+#     SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/third_party/whisper.cpp
+#     BINARY_DIR ${CMAKE_BINARY_DIR}/whisper_cpp_install_build
+#     CMAKE_ARGS
+#         -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/installed_whisper_cpp
+#         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+#         -DBUILD_SHARED_LIBS=ON
+#         -DWHISPER_BUILD_TESTS=OFF
+#         -DWHISPER_BUILD_EXAMPLES=OFF
+#         -DWHISPER_BUILD_SERVER=OFF
+#     INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
+# )
+
+# # Copy everything from build/installed_whisper_cpp to ${SKBUILD_PROJECT_NAME}/whisper/cpp
+# install(DIRECTORY ${CMAKE_BINARY_DIR}/installed_whisper_cpp/
+#     DESTINATION ${SKBUILD_PROJECT_NAME}/whisper/cpp
+# )
+
+
 # Add whisper.cpp submodule
 add_subdirectory(src/third_party/whisper.cpp)
 
@@ -42,15 +67,9 @@ cython_transpile(src/whisper_cpp/${MODULE_NAME}.pyx LANGUAGE CXX OUTPUT_VARIABLE
 # Create Python module
 python_add_library(${MODULE_NAME} MODULE "${whisper_cpp_file}" WITH_SOABI)
 
-# Include directories
-target_include_directories(${MODULE_NAME} PRIVATE
-    ${Python_INCLUDE_DIRS}
-    src/third_party/whisper.cpp
-)
-
 # Link whisper.cpp library
 target_link_libraries(${MODULE_NAME} PRIVATE whisper)
 
-# Install the module
+
+# Install the Python module
 install(TARGETS ${MODULE_NAME} DESTINATION ${SKBUILD_PROJECT_NAME}/whisper)
-install(TARGETS whisper DESTINATION ${SKBUILD_PROJECT_NAME}/whisper)

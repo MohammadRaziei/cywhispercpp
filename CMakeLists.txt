@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(whisper_cpp)
+project(whisper-cpp)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 11)
@@ -36,14 +36,11 @@ add_subdirectory(src/third_party/whisper.cpp)
 # Set Python module name
 set(MODULE_NAME whisper_cpp)
 
-# Set Python module output directory
-set(PYTHON_MODULE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/whisper_cpp)
-
 # Configure Cython module
-cython_transpile(src/whisper_cpp/whisper.pyx LANGUAGE CXX OUTPUT_VARIABLE whisper_c_file)
+cython_transpile(src/whisper_cpp/whisper.pyx LANGUAGE CXX OUTPUT_VARIABLE whisper_cpp_file)
 
 # Create Python module
-python_add_library(${MODULE_NAME} MODULE "${whisper_c_file}" WITH_SOABI)
+python_add_library(${MODULE_NAME} MODULE "${whisper_cpp_file}" WITH_SOABI)
 
 # Include directories
 target_include_directories(${MODULE_NAME} PRIVATE
@@ -55,4 +52,5 @@ target_include_directories(${MODULE_NAME} PRIVATE
 target_link_libraries(${MODULE_NAME} PRIVATE whisper)
 
 # Install the module
-install(TARGETS ${MODULE_NAME} DESTINATION .)
+install(TARGETS ${MODULE_NAME} DESTINATION ${SKBUILD_PROJECT_NAME})
+install(TARGETS whisper DESTINATION ${SKBUILD_PROJECT_NAME})

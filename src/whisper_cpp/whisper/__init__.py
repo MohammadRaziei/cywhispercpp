@@ -2,31 +2,42 @@
 
 import importlib.metadata
 import ctypes
+import logging
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 def get_whisper_path(): 
     return Path(__file__).parent
     
 
-# Load libwhisper.so.1 before importing the Cython module
+# Load all whisper.cpp libraries before importing the Cython module
 def load_whisper_library():
-    """Load the whisper library using ctypes so it's available for the Cython module"""
+    """Load all whisper.cpp libraries using ctypes so they're available for the Cython module"""
     
     # Get the directory where the parent package is located
     current_dir = get_whisper_path()
+    lib_dir = current_dir / "cpp" / "lib"
     
-    # Check for whisper library in current directory
-    possible_paths = [
-        current_dir / "libwhisper.so.1",
-        current_dir / "libwhisper.so",
+    # Load all required libraries in dependency order
+    libraries = [
+        "libggml-base.so",
+        "libggml.so", 
+        "libggml-cpu.so",
+        "libwhisper.so.1",  # Load the versioned library first
     ]
     
-    for lib_path in possible_paths:
+    for lib_name in libraries:
+        lib_path = lib_dir / lib_name
         if lib_path.exists():
-            return ctypes.CDLL(str(lib_path))
-    
-    raise FileNotFoundError("Could not find libwhisper.so.1 or libwhisper.so in the package directory")
+            try:
+                ctypes.CDLL(str(lib_path))
+                logger.debug(f"Successfully loaded: {lib_name}")
+            except Exception as e:
+                logger.warning(f"Failed to load {lib_name}: {e}")
+        else:
+            logger.warning(f"Library not found: {lib_path}")
 
 # Load the library before importing the Cython module
 load_whisper_library()

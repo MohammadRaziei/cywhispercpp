@@ -2,19 +2,22 @@
 
 import importlib.metadata
 import ctypes
-import os
 from pathlib import Path
+
+
+def get_whisper_cpp_path(): 
+    return Path(__file__).parent 
+    
 
 # Load libwhisper.so.1 before importing the Cython module
 def load_whisper_library():
     """Load the whisper library using ctypes so it's available for the Cython module"""
     
     # Get the directory where this __init__.py file is located
-    current_dir = Path(__file__).parent
+    current_dir = get_whisper_cpp_path()
     
-    # Try different possible library locations relative to this file
+    # Check for whisper library in current directory
     possible_paths = [
-        # In the same directory as this file (where it should be installed)
         current_dir / "libwhisper.so.1",
         current_dir / "libwhisper.so",
     ]
@@ -24,21 +27,10 @@ def load_whisper_library():
             print(f"Found whisper library at: {lib_path}")
             return ctypes.CDLL(str(lib_path))
     
-    # If not found, try loading by name (might work if in LD_LIBRARY_PATH)
-    try:
-        return ctypes.CDLL("libwhisper.so.1")
-    except OSError:
-        pass
-    
-    try:
-        return ctypes.CDLL("libwhisper.so")
-    except OSError:
-        pass
-    
-    raise FileNotFoundError("Could not find libwhisper.so.1 in any of the expected locations")
+    raise FileNotFoundError("Could not find libwhisper.so.1 or libwhisper.so in the package directory")
 
 # Load the library before importing the Cython module
-_ = load_whisper_library()
+load_whisper_library()
 
 __version__ = importlib.metadata.version("whisper-cpp")
 __author__ = importlib.metadata.metadata("whisper-cpp")["Author"]

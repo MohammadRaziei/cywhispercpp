@@ -54,4 +54,3 @@ htmlcov/
 *.pth
 *.onnx
 *.ggml
-models/

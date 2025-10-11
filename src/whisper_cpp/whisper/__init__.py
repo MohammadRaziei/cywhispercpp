@@ -5,8 +5,8 @@ import ctypes
 from pathlib import Path
 
 
-def get_whisper_cpp_path(): 
-    return Path(__file__).parent.parent
+def get_whisper_path(): 
+    return Path(__file__).parent
     
 
 # Load libwhisper.so.1 before importing the Cython module
@@ -14,7 +14,7 @@ def load_whisper_library():
     """Load the whisper library using ctypes so it's available for the Cython module"""
     
     # Get the directory where the parent package is located
-    current_dir = get_whisper_cpp_path()
+    current_dir = get_whisper_path()
     
     # Check for whisper library in current directory
     possible_paths = [
@@ -24,7 +24,6 @@ def load_whisper_library():
     
     for lib_path in possible_paths:
         if lib_path.exists():
-            print(f"Found whisper library at: {lib_path}")
             return ctypes.CDLL(str(lib_path))
     
     raise FileNotFoundError("Could not find libwhisper.so.1 or libwhisper.so in the package directory")

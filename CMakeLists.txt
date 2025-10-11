@@ -5,16 +5,21 @@ project(whisper-cpp)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add whisper.cpp submodule
-add_subdirectory(src/third_party/whisper.cpp)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 # Find Python and Cython
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(Cython MODULE REQUIRED VERSION 3.0)
 include(UseCython)
 
+# Add whisper.cpp submodule
+add_subdirectory(src/third_party/whisper.cpp)
+
 # Set Python module name
-set(MODULE_NAME whisper_cpp)
+set(MODULE_NAME whisper_c)
+
+# Set Python module output directory
+set(PYTHON_MODULE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/whisper_cpp)
 
 # Configure Cython module
 cython_transpile(src/whisper_cpp/whisper.pyx LANGUAGE CXX OUTPUT_VARIABLE whisper_c)
@@ -35,4 +40,4 @@ target_link_libraries(${MODULE_NAME} PRIVATE
 )
 
 # Install the module
-install(TARGETS ${MODULE_NAME} DESTINATION whisper_cpp)
+install(TARGETS ${MODULE_NAME} DESTINATION .)

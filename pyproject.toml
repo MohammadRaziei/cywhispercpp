@@ -41,10 +41,18 @@ dev = [
     "flake8>=6.0",
 ]
 
-[tool.scikit-build]
-cmake.minimum-version = "3.15"
-cmake.build-type = "Release"
-wheel.expand-macos-universal-tags = true
+[tool.setuptools]
+packages = ["whisper_cpp"]
+
+[tool.setuptools.package-dir]
+whisper_cpp = "src/whisper_cpp"
+
+[tool.scikit-build.cmake]
+version = ">=3.15"
+build-type = "Release"
+
+[tool.scikit-build.build]
+targets = ["whisper_cpp"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

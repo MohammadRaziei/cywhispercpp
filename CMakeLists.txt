@@ -33,11 +33,11 @@ include(UseCython)
 # Add whisper.cpp submodule
 add_subdirectory(src/third_party/whisper.cpp)
 
-# Set Python module name
+# Set Python module name (should match the .pyx filename)
 set(MODULE_NAME whisper_cpp)
 
 # Configure Cython module
-cython_transpile(src/whisper_cpp/whisper.pyx LANGUAGE CXX OUTPUT_VARIABLE whisper_cpp_file)
+cython_transpile(src/whisper_cpp/${MODULE_NAME}.pyx LANGUAGE CXX OUTPUT_VARIABLE whisper_cpp_file)
 
 # Create Python module
 python_add_library(${MODULE_NAME} MODULE "${whisper_cpp_file}" WITH_SOABI)

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(whisper-cpp)
+project(${SKBUILD_PROJECT_NAME})
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 11)
@@ -32,10 +32,10 @@ include(UseCython)
 
 
 # Set Python module name (should match the .pyx filename)
-set(MODULE_NAME whisper_cpp)
+set(MODULE_NAME cywhisper)
 
 # Configure Cython module
-cython_transpile(src/whisper_cpp/${MODULE_NAME}.pyx LANGUAGE CXX OUTPUT_VARIABLE whisper_cpp_file)
+cython_transpile(src/${MODULE_NAME}/${MODULE_NAME}.pyx LANGUAGE CXX OUTPUT_VARIABLE whisper_cpp_file)
 
 # Create Python module
 python_add_library(${MODULE_NAME} MODULE "${whisper_cpp_file}" WITH_SOABI)
@@ -43,10 +43,10 @@ python_add_library(${MODULE_NAME} MODULE "${whisper_cpp_file}" WITH_SOABI)
 
 # Add custom target to install whisper.cpp separately
 add_custom_target(install_whisper_cpp
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/installed_whisper_cpp
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/installed
     COMMAND cd ${CMAKE_SOURCE_DIR}/src/third_party/whisper.cpp && mkdir -p build_install && cd build_install && ${CMAKE_COMMAND} .. -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/installed_whisper_cpp -DBUILD_SHARED_LIBS=ON -DWHISPER_BUILD_TESTS=OFF -DWHISPER_BUILD_EXAMPLES=OFF -DWHISPER_BUILD_SERVER=OFF && ${CMAKE_MAKE_PROGRAM} -j4 && ${CMAKE_MAKE_PROGRAM} install
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    COMMENT "Installing whisper.cpp to ${CMAKE_BINARY_DIR}/installed_whisper_cpp"
+    COMMENT "Installing whisper.cpp to ${CMAKE_BINARY_DIR}/installed"
 )
 
 add_library(whisper_interface INTERFACE)

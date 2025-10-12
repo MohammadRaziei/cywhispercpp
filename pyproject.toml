@@ -7,7 +7,7 @@ requires = [
 build-backend = "scikit_build_core.build"
 
 [project]
-name = "whisper-cpp"
+name = "cywhisper"
 version = "0.1.0"
 description = "Python bindings for whisper.cpp using Cython"
 authors = [
@@ -32,7 +32,7 @@ dependencies = [
 ]
 
 [project.scripts]
-whisper-cpp = "whisper_cpp.__main__:main"
+cywhisper = "cywhisper.__main__:main"
 
 [project.optional-dependencies]
 dev = [
@@ -45,17 +45,17 @@ dev = [
 ]
 
 [tool.setuptools]
-packages = ["whisper_cpp"]
+packages = ["cywhisper"]
 
 [tool.setuptools.package-dir]
-whisper_cpp = "src/whisper_cpp"
+cywhisper = "src/cywhisper"
 
 [tool.scikit-build.cmake]
 version = ">=3.15"
 build-type = "Release"
 
 [tool.scikit-build.build]
-targets = ["whisper_cpp"]
+targets = ["cywhisper"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

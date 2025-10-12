@@ -1,8 +1,8 @@
 """Basic tests for whisper-cpp bindings."""
 
 import pytest
-import whisper_cpp as wcp
-from whisper_cpp import whisper
+import cywhisper as cw
+from cywhisper import whisper
 
 
 class TestWhisperBasic:
@@ -16,13 +16,13 @@ class TestWhisperBasic:
     
     def test_version(self):
         """Test that version is available."""
-        assert wcp.__version__ is not None
-        assert isinstance(wcp.__version__, str)
-        assert len(wcp.__version__) > 0
+        assert cw.__version__ is not None
+        assert isinstance(cw.__version__, str)
+        assert len(cw.__version__) > 0
     
     def test_whisper_class_exists(self):
         """Test that Whisper class can be instantiated."""
-        whisper_instance = whisper.Whisper.__new__(whisper.Whisper)
+        whisper_instance =  whisper.Whisper.__new__(whisper.Whisper)
         assert whisper_instance is not None
     
     def test_whisper_params_class_exists(self):

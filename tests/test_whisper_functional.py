@@ -1,7 +1,7 @@
 """Functional tests for whisper-cpp bindings."""
 
 import pytest
-from whisper_cpp import whisper
+from cywhisper import whisper
 
 
 class TestWhisperFunctional:

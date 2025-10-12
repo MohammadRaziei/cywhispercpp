@@ -2,7 +2,7 @@
 
 import importlib.metadata
 
-__version__ = importlib.metadata.version("whisper-cpp")
+__version__ = importlib.metadata.version("cywhisper")
 
 # Import whisper submodule
 from . import whisper

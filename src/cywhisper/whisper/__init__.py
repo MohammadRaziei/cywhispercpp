@@ -1,6 +1,5 @@
 """Python bindings for whisper.cpp using Cython."""
 
-import importlib.metadata
 import ctypes
 import logging
 from pathlib import Path
@@ -45,10 +44,6 @@ def load_whisper_library():
 # Load the library before importing the Cython module
 load_whisper_library()
 
-__version__ = importlib.metadata.version("whisper-cpp")
-__author__ = importlib.metadata.metadata("whisper-cpp")["Author"]
-
-
-from .whisper_cpp import Whisper, WhisperParams, WhisperState
+from .cywhisper import Whisper, WhisperParams, WhisperState
 
 __all__ = ["Whisper", "WhisperParams", "WhisperState"]

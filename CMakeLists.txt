@@ -31,10 +31,6 @@ find_package(Cython MODULE REQUIRED VERSION 3.0)
 include(UseCython)
 
 
-
-# Add whisper.cpp submodule
-add_subdirectory(src/third_party/whisper.cpp)
-
 # Set Python module name (should match the .pyx filename)
 set(MODULE_NAME whisper_cpp)
 
@@ -44,12 +40,6 @@ cython_transpile(src/whisper_cpp/${MODULE_NAME}.pyx LANGUAGE CXX OUTPUT_VARIABLE
 # Create Python module
 python_add_library(${MODULE_NAME} MODULE "${whisper_cpp_file}" WITH_SOABI)
 
-# Link whisper.cpp library
-target_link_libraries(${MODULE_NAME} PRIVATE whisper)
-
-
-# Install the Python module
-install(TARGETS ${MODULE_NAME} DESTINATION ${SKBUILD_PROJECT_NAME}/whisper)
 
 # Add custom target to install whisper.cpp separately
 add_custom_target(install_whisper_cpp
@@ -59,6 +49,11 @@ add_custom_target(install_whisper_cpp
     COMMENT "Installing whisper.cpp to ${CMAKE_BINARY_DIR}/installed_whisper_cpp"
 )
 
+add_library(whisper_interface INTERFACE)
+target_include_directories(whisper_interface INTERFACE ${CMAKE_BINARY_DIR}/installed_whisper_cpp/include)
+target_link_directories(whisper_interface INTERFACE ${CMAKE_BINARY_DIR}/installed_whisper_cpp/lib)
+target_link_libraries(whisper_interface INTERFACE ggml-base ggml-cpu ggml)
+target_link_libraries(whisper_interface INTERFACE whisper)
 # Copy everything from build/installed_whisper_cpp to ${SKBUILD_PROJECT_NAME}/whisper/cpp
 install(DIRECTORY ${CMAKE_BINARY_DIR}/installed_whisper_cpp/
     DESTINATION ${SKBUILD_PROJECT_NAME}/whisper/cpp
@@ -66,3 +61,13 @@ install(DIRECTORY ${CMAKE_BINARY_DIR}/installed_whisper_cpp/
 
 # Add dependency so whisper.cpp installation happens during build
 add_dependencies(${MODULE_NAME} install_whisper_cpp)
+
+# Link whisper.cpp library
+target_link_libraries(${MODULE_NAME} PRIVATE whisper_interface)
+
+
+
+# Install the Python module
+install(TARGETS ${MODULE_NAME} DESTINATION ${SKBUILD_PROJECT_NAME}/whisper)
+
+

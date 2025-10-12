@@ -44,7 +44,6 @@ python_add_library(${MODULE_NAME} MODULE "${whisper_cpp_file}" WITH_SOABI)
 
 # Add custom target to install whisper.cpp separately
 add_custom_target(install_whisper_cpp
-    # COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/installed
     COMMAND ${CMAKE_COMMAND} -B ${CMAKE_BINARY_DIR}/whisper_cpp
         -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/whisper_cpp/installed 
         -DBUILD_SHARED_LIBS=ON 
@@ -56,14 +55,18 @@ add_custom_target(install_whisper_cpp
     COMMENT "Installing whisper.cpp to ${CMAKE_BINARY_DIR}/whisper_cpp/installed"
 )
 
+# Add dependency so whisper.cpp installation happens during build
+add_dependencies(${MODULE_NAME} install_whisper_cpp)
+
 add_library(whisper_interface INTERFACE)
 target_include_directories(whisper_interface INTERFACE ${CMAKE_BINARY_DIR}/whisper_cpp/installed/include)
-target_link_directories(whisper_interface INTERFACE ${CMAKE_BINARY_DIR}/whisper_cpp/installed/lib)
+target_link_directories(whisper_interface INTERFACE 
+    ${CMAKE_BINARY_DIR}/whisper_cpp/installed/lib
+    ${CMAKE_BINARY_DIR}/whisper_cpp/installed/lib64
+)
 target_link_libraries(whisper_interface INTERFACE ggml-base ggml-cpu ggml)
 target_link_libraries(whisper_interface INTERFACE whisper)
 
-# Add dependency so whisper.cpp installation happens during build
-add_dependencies(${MODULE_NAME} install_whisper_cpp)
 
 # Link whisper.cpp library
 target_link_libraries(${MODULE_NAME} PRIVATE whisper_interface)
@@ -77,4 +80,3 @@ install(TARGETS ${MODULE_NAME} DESTINATION ${SKBUILD_PROJECT_NAME}/whisper)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/whisper_cpp/installed/
     DESTINATION ${SKBUILD_PROJECT_NAME}/whisper/cpp
 )
-

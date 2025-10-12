@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 project(${SKBUILD_PROJECT_NAME})
+# Set Python module name (should match the .pyx filename)
+string(REPLACE "-" "_" MODULE_NAME ${SKBUILD_PROJECT_NAME})
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 11)
@@ -31,8 +33,7 @@ find_package(Cython MODULE REQUIRED VERSION 3.0)
 include(UseCython)
 
 
-# Set Python module name (should match the .pyx filename)
-set(MODULE_NAME cywhisper)
+
 
 # Configure Cython module
 cython_transpile(src/${MODULE_NAME}/${MODULE_NAME}.pyx LANGUAGE CXX OUTPUT_VARIABLE whisper_cpp_file)

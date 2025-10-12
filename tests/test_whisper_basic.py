@@ -1,8 +1,8 @@
 """Basic tests for whisper-cpp bindings."""
 
 import pytest
-import cywhisper as cw
-from cywhisper import whisper
+import cywhispercpp as cw
+from cywhispercpp import whisper
 
 
 class TestWhisperBasic:

@@ -44,6 +44,6 @@ def load_whisper_library():
 # Load the library before importing the Cython module
 load_whisper_library()
 
-from .cywhisper import Whisper, WhisperParams, WhisperState
+from .cywhispercpp import Whisper, WhisperParams, WhisperState
 
 __all__ = ["Whisper", "WhisperParams", "WhisperState"]

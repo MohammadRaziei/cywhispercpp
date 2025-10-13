@@ -42,30 +42,32 @@ cython_transpile(src/${MODULE_NAME}/${MODULE_NAME}.pyx LANGUAGE CXX OUTPUT_VARIA
 python_add_library(${MODULE_NAME} MODULE "${whisper_cpp_file}" WITH_SOABI)
 
 
+# Set whisper.cpp installation directory
+set(WHISPER_CPP_INSTALL_DIR ${CMAKE_BINARY_DIR}/whisper_cpp_install)
+
 # Add custom target to install whisper.cpp separately
 add_custom_target(install_whisper_cpp
     COMMAND ${CMAKE_COMMAND} -B ${CMAKE_BINARY_DIR}/whisper_cpp
-        -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/whisper_cpp/installed 
+        -DCMAKE_INSTALL_PREFIX=${WHISPER_CPP_INSTALL_DIR}
         -DBUILD_SHARED_LIBS=ON 
         -DWHISPER_BUILD_TESTS=OFF 
         -DWHISPER_BUILD_EXAMPLES=OFF 
         -DWHISPER_BUILD_SERVER=OFF 
     COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}/whisper_cpp -j4 --target install
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/third_party/whisper.cpp
-    COMMENT "Installing whisper.cpp to ${CMAKE_BINARY_DIR}/whisper_cpp/installed"
+    COMMENT "Installing whisper.cpp to ${WHISPER_CPP_INSTALL_DIR}"
 )
 
 # Add dependency so whisper.cpp installation happens during build
 add_dependencies(${MODULE_NAME} install_whisper_cpp)
 
 add_library(whisper_interface INTERFACE)
-target_include_directories(whisper_interface INTERFACE ${CMAKE_BINARY_DIR}/whisper_cpp/installed/include)
+target_include_directories(whisper_interface INTERFACE ${WHISPER_CPP_INSTALL_DIR}/include)
 target_link_directories(whisper_interface INTERFACE 
-    ${CMAKE_BINARY_DIR}/whisper_cpp/installed/lib
-    ${CMAKE_BINARY_DIR}/whisper_cpp/installed/lib64
+    ${WHISPER_CPP_INSTALL_DIR}/lib
+    ${WHISPER_CPP_INSTALL_DIR}/lib64
 )
-target_link_libraries(whisper_interface INTERFACE ggml-base ggml-cpu ggml)
-target_link_libraries(whisper_interface INTERFACE whisper)
+target_link_libraries(whisper_interface INTERFACE ggml-base ggml-cpu ggml whisper)
 
 
 # Link whisper.cpp library
@@ -76,7 +78,7 @@ target_link_libraries(${MODULE_NAME} PRIVATE whisper_interface)
 # Install the Python module
 install(TARGETS ${MODULE_NAME} DESTINATION ${SKBUILD_PROJECT_NAME}/whisper)
 
-# Copy everything from build/installed_whisper_cpp to ${SKBUILD_PROJECT_NAME}/whisper/cpp
-install(DIRECTORY ${CMAKE_BINARY_DIR}/whisper_cpp/installed/
+# Copy everything from whisper.cpp installation to ${SKBUILD_PROJECT_NAME}/whisper/cpp
+install(DIRECTORY ${WHISPER_CPP_INSTALL_DIR}
     DESTINATION ${SKBUILD_PROJECT_NAME}/whisper/cpp
 )

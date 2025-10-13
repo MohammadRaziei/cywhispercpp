@@ -58,6 +58,11 @@ build-type = "Release"
 [tool.scikit-build.build]
 targets = ["cywhispercpp"]
 
+[tool.scikit-build]
+sdist.include = [
+    "src/third_party/whisper.cpp/**/*"
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = [

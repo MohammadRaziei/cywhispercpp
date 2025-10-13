@@ -43,12 +43,11 @@ python_add_library(${MODULE_NAME} MODULE "${whisper_cpp_file}" WITH_SOABI)
 
 
 include(ExternalProject)
-
 # Set whisper.cpp install directory
 set(WHISPER_CPP_INSTALL_DIR ${CMAKE_BINARY_DIR}/whisper_cpp/install)
 
 # Define external project for whisper.cpp
-ExternalProject_Add(whisper_cpp_project
+ExternalProject_Add(install_whisper_cpp
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/third_party/whisper.cpp
     BINARY_DIR ${CMAKE_BINARY_DIR}/whisper_cpp/build
     INSTALL_DIR ${WHISPER_CPP_INSTALL_DIR}
@@ -66,12 +65,29 @@ ExternalProject_Add(whisper_cpp_project
     LOG_CONFIGURE OFF
     LOG_BUILD OFF
     LOG_INSTALL OFF
-    COMMENT "Building and installing whisper.cpp using ExternalProject_Add"
+    COMMENT "Building and installing whisper.cpp"
 )
+# add_custom_target(install_whisper_cpp
+#     COMMAND ${CMAKE_COMMAND} -B ${CMAKE_BINARY_DIR}/whisper_cpp
+#         -DCMAKE_INSTALL_PREFIX=${WHISPER_CPP_INSTALL_DIR}
+#         -DBUILD_SHARED_LIBS=ON 
+#         -DWHISPER_BUILD_TESTS=OFF 
+#         -DWHISPER_BUILD_EXAMPLES=OFF 
+#         -DWHISPER_BUILD_SERVER=OFF 
+#     COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}/whisper_cpp -j4 --target install
+#     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/third_party/whisper.cpp
+#     COMMENT "Installing whisper.cpp to ${WHISPER_CPP_INSTALL_DIR}"
+# )
+
+# Add dependency so whisper.cpp installation happens during build
+add_dependencies(${MODULE_NAME} install_whisper_cpp)
+
+
+
+
 
 # Create interface library for whisper.cpp
 add_library(whisper_interface INTERFACE)
-add_dependencies(whisper_interface whisper_cpp_project)
 
 target_include_directories(whisper_interface INTERFACE
     ${WHISPER_CPP_INSTALL_DIR}/include
@@ -88,9 +104,6 @@ target_link_libraries(whisper_interface INTERFACE
 
 # Link whisper interface to the main module
 target_link_libraries(${MODULE_NAME} PRIVATE whisper_interface)
-
-# Ensure whisper.cpp is built before the main module
-add_dependencies(${MODULE_NAME} whisper_cpp_project)
 
 # Install the Python module
 install(TARGETS ${MODULE_NAME}

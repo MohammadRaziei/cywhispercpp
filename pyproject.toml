@@ -63,7 +63,6 @@ testpaths = ["tests"]
 addopts = [
     "-v",
     "--tb=short",
-    "-n=auto",
 ]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]

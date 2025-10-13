@@ -43,7 +43,7 @@ python_add_library(${MODULE_NAME} MODULE "${whisper_cpp_file}" WITH_SOABI)
 
 
 # Set whisper.cpp installation directory
-set(WHISPER_CPP_INSTALL_DIR ${CMAKE_BINARY_DIR}/whisper_cpp_install)
+set(WHISPER_CPP_INSTALL_DIR ${CMAKE_BINARY_DIR}/whisper_cpp/install)
 
 # Add custom target to install whisper.cpp separately
 add_custom_target(install_whisper_cpp

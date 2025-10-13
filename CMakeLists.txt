@@ -95,7 +95,6 @@ target_include_directories(whisper_interface INTERFACE
 
 target_link_directories(whisper_interface INTERFACE
     ${WHISPER_CPP_INSTALL_DIR}/lib
-    ${WHISPER_CPP_INSTALL_DIR}/lib64
 )
 
 target_link_libraries(whisper_interface INTERFACE

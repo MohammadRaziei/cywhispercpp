@@ -1,24 +1,32 @@
-# whisper-cpp
+![whisper-cpp](docs/images/whisper-cpp.svg)
 
-Python bindings for whisper.cpp using Cython and scikit-build.
+# cywhispercpp
+
+Python bindings for [whisper.cpp](https://github.com/ggerganov/whisper.cpp) using Cython and scikit-build.
+
+## Overview
+
+This project provides Python bindings for the [whisper.cpp](https://github.com/ggerganov/whisper.cpp) library, enabling speech recognition capabilities in Python with native performance through Cython integration.
+
+**Note:** This project is not just for Python developers! C++ developers can also use the pre-built whisper.cpp library included in this package instead of building whisper.cpp from source.
 
 ## Features
 
 - Python bindings for whisper.cpp speech recognition
-- Built with Cython for performance
-- Uses scikit-build for CMake integration
-- TDD approach with pytest and pytest-xdist
-- Built-in model downloader with CLI
+- Built with Cython for optimal performance
+- CMake integration via scikit-build
+- Built-in model downloader with CLI interface
+- Test-driven development approach
 
 ## Installation
 
 ```bash
-pip install .
+pip install cywhispercpp
 ```
 
-For development:
+For the latest development version:
 ```bash
-pip install -e .[dev]
+pip install git+https://github.com/MohammadRaziei/whisper-cpp.git
 ```
 
 ## Quick Start
@@ -27,19 +35,19 @@ pip install -e .[dev]
 
 ```bash
 # List available models
-whisper-cpp models list
+cywhispercpp models list
 
 # Download a model
-whisper-cpp models download tiny
+cywhispercpp models download tiny
 
 # Download to specific path
-whisper-cpp models download base /path/to/models
+cywhispercpp models download base /path/to/models
 ```
 
-### Use in Python
+### Python Usage
 
 ```python
-from whisper_cpp.models import download_model
+from cywhispercpp.models import download_model
 
 # Download a model
 download_model("tiny")
@@ -52,16 +60,6 @@ Run tests:
 pytest -n auto
 ```
 
-## Project Structure
+## License
 
-```
-whisper-cpp/
-├── src/
-│   ├── whisper_cpp/          # Python package
-│   │   ├── models/           # Model downloader module
-│   │   └── __main__.py       # CLI entry point
-│   └── third_party/          # Submodules
-├── tests/                    # Test files
-├── CMakeLists.txt           # CMake configuration
-└── pyproject.toml          # Project configuration
-```
+MIT License

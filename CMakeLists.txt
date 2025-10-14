@@ -95,6 +95,7 @@ target_include_directories(whisper_interface INTERFACE
 
 target_link_directories(whisper_interface INTERFACE
     ${WHISPER_CPP_INSTALL_DIR}/lib
+    ${CMAKE_INSTALL_PREFIX}/${SKBUILD_PROJECT_NAME}/whisper/cpp
 )
 
 target_link_libraries(whisper_interface INTERFACE

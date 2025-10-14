@@ -45,18 +45,12 @@ dev = [
     "flake8>=6.0",
 ]
 
-[tool.setuptools]
-packages = ["cywhispercpp"]
-
 [tool.setuptools.package-dir]
 cywhispercpp = "src/cywhispercpp"
 
 [tool.scikit-build.cmake]
 version = ">=3.15"
 build-type = "Release"
-
-[tool.scikit-build.build]
-targets = ["cywhispercpp"]
 
 [tool.scikit-build]
 sdist.include = [

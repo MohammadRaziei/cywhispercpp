@@ -63,7 +63,7 @@ jobs:
       uses: pypa/cibuildwheel@v2.16.5
       env:
         # Disable building PyPy wheels on all platforms
-        CIBW_SKIP: pp*
+        CIBW_SKIP: pp* *i686*
         # Build for all supported Python versions
         CIBW_BUILD_VERBOSITY: 1
 

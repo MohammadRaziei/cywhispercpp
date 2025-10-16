@@ -61,6 +61,7 @@ ExternalProject_Add(install_whisper_cpp
 
     CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
+        -DCMAKE_INSTALL_LIBDIR=lib         
         -DBUILD_SHARED_LIBS=ON
         -DWHISPER_BUILD_TESTS=OFF
         -DWHISPER_BUILD_EXAMPLES=OFF
@@ -102,8 +103,6 @@ target_include_directories(whisper_interface INTERFACE
 
 target_link_directories(whisper_interface INTERFACE
     ${WHISPER_CPP_INSTALL_DIR}/lib
-    ${WHISPER_CPP_INSTALL_DIR}/lib64
-    ${CMAKE_INSTALL_PREFIX}/${SKBUILD_PROJECT_NAME}/whisper/cpp
 )
 
 target_link_libraries(whisper_interface INTERFACE

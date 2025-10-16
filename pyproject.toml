@@ -45,6 +45,12 @@ dev = [
     "flake8>=6.0",
 ]
 
+[project.urls]
+"Homepage" = "https://github.com/mohammadraziei/cywhispercpp"
+"Bug Tracker" = "https://github.com/mohammadraziei/cywhispercpp/issues"
+"Document" = "https://mohammadraziei.github.io/cywhispercpp"
+
+
 [tool.setuptools.package-dir]
 cywhispercpp = "src/cywhispercpp"
 
@@ -60,6 +66,7 @@ sdist.include = [
 
 [tool.cibuildwheel]
 skip = "*i686*"
+test-command = "python -m pytest"
 
 [tool.cibuildwheel.linux]
 repair-wheel-command = "cp {wheel} {dest_dir}/"

@@ -20,6 +20,11 @@ cdef extern from "whisper.h":
     ctypedef struct whisper_state:
         pass
     
+    ctypedef struct whisper_context_params:
+        bool use_gpu
+        bool flash_attn
+        int gpu_device
+    
     ctypedef struct whisper_full_params:
         int n_threads
         int n_max_text_ctx
@@ -80,8 +85,9 @@ cdef extern from "whisper.h":
         const char* text
         vector[whisper_token_data] tokens
     
-    whisper_context* whisper_init_from_file(const char* path_model)
-    whisper_context* whisper_init_from_buffer(void* buffer, size_t buffer_size)
+    whisper_context* whisper_init_from_file_with_params(const char* path_model, whisper_context_params params)
+    whisper_context* whisper_init_from_buffer_with_params(void* buffer, size_t buffer_size, whisper_context_params params)
+    whisper_context_params whisper_context_default_params()
     void whisper_free(whisper_context* ctx)
     
     int whisper_pcm_to_mel(
@@ -210,7 +216,8 @@ cdef class Whisper:
         """
         cdef bytes model_path_bytes = model_path.encode('utf-8')
         cdef const char* model_path_cstr = model_path_bytes
-        self.ctx = whisper_init_from_file(model_path_cstr)
+        cdef whisper_context_params params = whisper_context_default_params()
+        self.ctx = whisper_init_from_file_with_params(model_path_cstr, params)
         if self.ctx == NULL:
             raise RuntimeError(f"Failed to load whisper model from {model_path}")
     
@@ -226,7 +233,8 @@ cdef class Whisper:
         """
         cdef Whisper instance = Whisper.__new__(Whisper)
         cdef char* buffer_ptr = <char*>buffer
-        instance.ctx = whisper_init_from_buffer(buffer_ptr, len(buffer))
+        cdef whisper_context_params params = whisper_context_default_params()
+        instance.ctx = whisper_init_from_buffer_with_params(buffer_ptr, len(buffer), params)
         if instance.ctx == NULL:
             raise RuntimeError("Failed to load whisper model from buffer")
         return instance

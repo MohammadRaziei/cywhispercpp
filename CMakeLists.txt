@@ -41,6 +41,13 @@ cython_transpile(src/${MODULE_NAME}/${MODULE_NAME}.pyx LANGUAGE CXX OUTPUT_VARIA
 # Create Python module
 python_add_library(${MODULE_NAME} MODULE "${whisper_cpp_file}" WITH_SOABI)
 
+set_target_properties(${MODULE_NAME} PROPERTIES
+    INSTALL_RPATH "$ORIGIN/cpp/lib"
+    BUILD_RPATH "$ORIGIN/cpp/lib"
+    SKIP_RPATH FALSE
+    INSTALL_RPATH_USE_LINK_PATH TRUE
+)
+
 
 include(ExternalProject)
 # Set whisper.cpp install directory

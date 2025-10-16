@@ -10,6 +10,7 @@ build/
 *.whl
 .Python
 venv/
+/venv*
 env/
 ENV/
 .venv
